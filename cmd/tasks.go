@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/jedib0t/go-pretty/v6/list"
+	"github.com/jedib0t/go-pretty/v6/text"
 )
 
 type StatusType string
@@ -94,11 +95,11 @@ func (tasks *TaskList) Store(filename string) error {
 func (tasks *TaskList) List() {
 	l := list.NewWriter()
 	l.SetStyle(list.StyleConnectedRounded)
-	for idx, task := range *tasks {
-		l.AppendItem(fmt.Sprintf("#%d: (%s) %s", idx, task.Status, task.Title))
+	for tid, task := range *tasks {
+		l.AppendItem(fmt.Sprintf("#%d: (%s - %s) %s", tid, text.FgHiGreen.Sprint(task.Status), task.CompletedAt.Format("Jan 2, 06"), text.FgHiBlue.Sprint(task.Title)))
 		l.Indent()
-		for _, update := range task.Updates {
-			l.AppendItem(update.Description)
+		for uid, update := range task.Updates {
+			l.AppendItem(fmt.Sprintf("##%d: %s %s", uid, update.WrittenAt.Format("Jan 2, 06"), text.FgHiMagenta.Sprint(update.Description)))
 		}
 		l.UnIndent()
 	}
