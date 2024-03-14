@@ -23,10 +23,10 @@ var updateCmd = &cobra.Command{
 
 		id, _ := strconv.Atoi(args[0])
 		status, _ := cmd.Flags().GetString("status")
-		description, _ := cmd.Flags().GetString("description")
+		message, _ := cmd.Flags().GetString("message")
 
-		if description != "" {
-			tasks.Update(id, description)
+		if message != "" {
+			tasks.Update(id, message)
 		}
 
 		if status != "" {
@@ -45,5 +45,5 @@ var updateCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(updateCmd)
 	updateCmd.Flags().StringP("status", "s", "", "Status of the task")
-	updateCmd.Flags().StringP("description", "d", "", "Description of the update")
+	updateCmd.Flags().StringP("message", "m", "", "Description of the update")
 }

@@ -4,7 +4,6 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -14,20 +13,42 @@ import (
 var reportCmd = &cobra.Command{
 	Use:   "report",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  ``,
+	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		tasks := TaskList{}
 		tasks.Load("tasks.json")
 
-		for _, task := range tasks {
-			if task.Status == Done && isTodayOrYesterday(task.CompletedAt) {
-				fmt.Println(task.Title)
+		if len(args) == 0 {
+			tasks.List()
+			return
+		}
+
+		reportType := args[0]
+
+		if reportType == "standup" {
+
+			filteredTasks := TaskList{}
+			for _, task := range tasks {
+				if task.Status == Done && isTodayOrYesterday(task.CompletedAt) {
+					filteredTasks.AddTask(task)
+				} else if task.Status == InProgress {
+
+					filteredUpdates := []TaskUpdate{}
+					for _, update := range task.Updates {
+						if isTodayOrYesterday(update.WrittenAt) {
+							filteredUpdates = append(filteredUpdates, update)
+						}
+					}
+
+					if len(filteredUpdates) > 0 {
+						task.Updates = filteredUpdates
+						filteredTasks.AddTask(task)
+					}
+				}
 			}
+
+			filteredTasks.List()
 		}
 	},
 }

@@ -44,6 +44,10 @@ func (tasks *TaskList) Add(title string) {
 	*tasks = append(*tasks, todo)
 }
 
+func (tasks *TaskList) AddTask(task Task) {
+	*tasks = append(*tasks, task)
+}
+
 func (tasks *TaskList) Get(id int) *Task {
 	return &(*tasks)[id]
 }
